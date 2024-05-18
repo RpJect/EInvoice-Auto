@@ -1,0 +1,144 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+
+
+<title>Invoice Automation Control Panel by Rpjects</title>
+<HTA:APPLICATION
+  APPLICATIONNAME="Invoice Automation Control Panel by Rpjects"
+  ID="InvoiceAutomationControlPanel"
+  VERSION="1.0"
+  MAXIMIZEBUTTON="no"
+  MINIMIZEBUTTON="yes"
+  BORDER="thin"
+  SCROLL="no"
+  SINGLEINSTANCE="yes"
+/>
+	
+<script language="VBScript">
+Dim excelApp, wshShell
+Dim workbook, sheet
+Dim currentRow
+Dim name, itemDescription, quantity, unitPriceEgp
+Dim browserTitle ' Variable to hold the browser title
+
+' Function to open and read Excel file
+Sub OpenSelectedExcelFile
+    Dim fileName
+    fileName = Document.getElementById("excelFile").value
+    Set excelApp = CreateObject("Excel.Application")
+    Set workbook = excelApp.Workbooks.Open(fileName)
+    Set sheet = workbook.Sheets(1)
+    excelApp.Visible = True
+    currentRow = 18 ' Starting row for line items
+    LoadLineItem
+End Sub
+
+' Function to load line item details into the HTA
+Sub LoadLineItem
+    name = sheet.Range("D11").Value
+    itemDescription = sheet.Range("C" & currentRow).Value
+    quantity = sheet.Range("F" & currentRow).Value
+    unitPriceEgp = sheet.Range("H" & currentRow).Value
+    document.getElementById("nameField").value = name
+    document.getElementById("itemDescriptionField").value = itemDescription
+    document.getElementById("quantityField").value = quantity
+    document.getElementById("unitPriceEgpField").value = unitPriceEgp
+End Sub
+
+' Function to set the browser title from the user input
+Sub SetBrowserTitle
+    browserTitle = document.getElementById("browserTitleInput").value
+End Sub
+
+' Function to fill the name in the web form
+Sub FillName
+    Set wshShell = CreateObject("WScript.Shell")
+    If wshShell.AppActivate(browserTitle) Then
+        wshShell.SendKeys name
+        wshShell.SendKeys "{TAB}"
+    Else
+        MsgBox "The specified browser window was not found. Please check the title and try again."
+    End If
+End Sub
+
+
+' Function to fill the item details in the web form
+Sub FillDetails
+    Set wshShell = CreateObject("WScript.Shell")
+    If wshShell.AppActivate(browserTitle) Then
+    wshShell.SendKeys itemDescription
+    wshShell.SendKeys "{TAB}"
+    wshShell.SendKeys quantity
+    wshShell.SendKeys "{TAB}"
+    wshShell.SendKeys unitPriceEgp
+    wshShell.SendKeys "{TAB}{TAB}" ' Added an extra tab here.
+Else
+        MsgBox "The specified browser window was not found. Please check the title and try again."
+    End If
+End Sub
+
+' Function to handle the "Add Line" button click
+Sub AddLine
+    currentRow = currentRow + 1 ' Move to the next row
+    LoadLineItem
+    FillDetails
+End Sub
+
+' Clean up and close Excel
+Sub CleanUp
+    workbook.Close False
+    excelApp.Quit
+    Set sheet = Nothing
+    Set workbook = Nothing
+    Set excelApp = Nothing
+    Set wshShell = Nothing
+End Sub
+</script>
+   <div style="text-align: center">
+    <h1 style="
+    background-color: #333; /* Dark background */
+    color: #fff; /* White text */
+    padding: 5px; /* Reduced padding */
+    margin-top: 5x; /* Remove default margin */
+    font-size: 15px; /* Smaller font size */
+    
+" ">
+     Invoice Automation Control Panel version 1.0
+</h1>
+<img src="https://rpject.github.io/.io/assets/images/favicon.ico" alt="RpJect Logo" style="margin-top: 1px;">
+</head>
+<body>
+<h2 style="margin-top: 3px; margin-bottom: 5px;">Invoice Automation Control Panel</h2>
+
+<form name="controlForm">
+     Select Excel File: <input type="file" id="excelFile"><br>
+    <input type="button" value="Open Excel File" onclick="OpenSelectedExcelFile"><br>
+	Browser Title: <input type="text" id="browserTitleInput"><br>
+    <input type="button" value="Set Browser Title" onclick="SetBrowserTitle">
+    <br>
+    Name: <input type="text" id="nameField" readonly><br>
+    Item Description: <input type="text" id="itemDescriptionField" readonly><br>
+    Quantity: <input type="text" id="quantityField" readonly><br>
+    Unit Price EGP: <input type="text" id="unitPriceEgpField" readonly><br>
+    <input type="button" value="Fill Name" onclick="FillName"><br>
+    <input type="button" value="Fill Details" onclick="FillDetails"><br>
+    <input type="button" value="+ Add Line" onclick="AddLine"><br>
+    <input type="button" value="Clean Up" onclick="CleanUp">
+</form>
+</body>
+  <footer>
+    <p style="
+        text-align: center;
+        padding: 10px; /* Reduced padding */
+        background-color: #333;
+        color: #fff;
+        font-size: 14px; /* Smaller font size */
+        margin-top: 30px;
+        border-top: 4px solid #00b0f0;
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    ">© 2024 Invoice Automation Control Panel by Rpjects. All rights reserved.</p>
+</footer>
+</html>
